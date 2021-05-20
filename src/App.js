@@ -4,10 +4,46 @@ import { useEffect, useState } from 'react';
 import FlightMap from './components/FlightMap';
 import FlightInformation from './components/FlightInformation';
 import Chat from './components/Chat';
-
+const socket = io(
+	'http://tarea-3-websocket.2021-1.tallerdeintegracion.cl',
+	{
+		path: '/flights',
+	}
+);
 const App = () => {
 	const [markerPositions, setMarkerPositions] = useState({});
 	const [flights, setFlights] = useState([]);
+	const [chats, setChats] = useState([]);
+	// marker position useEffect
+	useEffect(() => {
+		const socket = io(
+			'http://tarea-3-websocket.2021-1.tallerdeintegracion.cl',
+			{
+				path: '/flights',
+			}
+		);
+		// Listen to the POSITION
+		socket.on('POSITION', (data) => {
+			const temp = { ...markerPositions };
+			temp[data.code] = data.position;
+			// update the state
+			setMarkerPositions(temp);
+			console.log(markerPositions);
+		});
+		// Listen to the POSITION
+
+		socket.on('CHAT', (data) => {
+			console.log(data);
+			const tempChat = [...chats];
+			tempChat.push(data);
+			setChats(tempChat);
+		});
+
+		// 	// CLEAN UP THE EFFECT
+		return () => socket.disconnect();
+	}, [markerPositions, chats]);
+
+	// flights info useEffect
 	useEffect(() => {
 		const socket = io(
 			'http://tarea-3-websocket.2021-1.tallerdeintegracion.cl',
@@ -20,17 +56,14 @@ const App = () => {
 			console.log(data);
 			setFlights(data);
 		});
-		socket.on('POSITION', (data) => {
-			const temp = { ...markerPositions };
-			temp[data.code] = data.position;
-			// update the state
-			setMarkerPositions(temp);
-			console.log(markerPositions);
+	}, []);
+	const sendChat = (name, message) => {
+		socket.emit('CHAT', {
+			name,
+			message,
 		});
-		socket.on('CHAT', (data) => console.log(data));
-		// 	// CLEAN UP THE EFFECT
-		return () => socket.disconnect();
-	}, [markerPositions]);
+	};
+
 	return (
 		<div className='App'>
 			<div id='flight-data'>
@@ -40,7 +73,7 @@ const App = () => {
 				/>
 				<FlightInformation flights={flights} />
 			</div>
-			<Chat />
+			<Chat chats={chats} sendChat={sendChat} />
 		</div>
 	);
 };
