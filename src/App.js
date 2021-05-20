@@ -38,7 +38,7 @@ const App = () => {
 					markerPositions={markerPositions}
 					flights={flights}
 				/>
-				<FlightInformation />
+				<FlightInformation flights={flights} />
 			</div>
 			<Chat />
 		</div>

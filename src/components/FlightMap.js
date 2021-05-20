@@ -4,15 +4,16 @@ import {
 	MapContainer,
 	TileLayer,
 	Marker,
-	Popup,
+	Polyline,
+	Tooltip,
+	FeatureGroup,
 } from 'react-leaflet';
 
 const FlightMap = ({ markerPositions, flights }) => {
-
 	const airplane = new Icon({
 		iconUrl: '/airplane.png',
-		iconSize:[40, 40]
-	})
+		iconSize: [40, 40],
+	});
 	return (
 		<div className='flight-map'>
 			<h2>Flight Map</h2>
@@ -20,32 +21,46 @@ const FlightMap = ({ markerPositions, flights }) => {
 				className='leaflet-container'
 				center={flights.length > 0 ? flights[0].origin : [-33, -66]}
 				zoom={5}
-				scrollWheelZoom={false}
+				scrollWheelZoom={true}
 			>
 				<TileLayer
 					attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 					url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 				/>
-				{flights.map((flight) => (
-					<Marker
-						key={flight.code}
-						position={
-							markerPositions[flight.code]
-								? markerPositions[flight.code]
-								: [0, 0]
-						}
-						icon={airplane}
-					>
-						<Popup>
-							Airline: {flight.airline}
-							<br />
-							Flight Code: {flight.code}
-							<br />
-							Plane: {flight.plane}
-							<br />
-							Seats: {flight.seats}
-						</Popup>
-					</Marker>
+				{flights.map((flight, key) => (
+					<FeatureGroup key={flight.code}>
+						<Marker
+							position={
+								markerPositions[flight.code]
+									? markerPositions[flight.code]
+									: [0, 0]
+							}
+							icon={airplane}
+						>
+							<Tooltip>
+								Airline: {flight.airline}
+								<br />
+								Flight Code: {flight.code}
+								<br />
+								Plane: {flight.plane}
+								<br />
+								Seats: {flight.seats}
+							</Tooltip>
+						</Marker>
+						<Polyline
+							pathOptions={{
+								color:
+									'#' +
+									Math.floor(16777215 * ((key + 1) / 11)).toString(
+										16
+									),
+
+								weight: 3,
+								opacity: 0.8,
+							}}
+							positions={[flight.destination, flight.origin]}
+						/>
+					</FeatureGroup>
 				))}
 			</MapContainer>
 		</div>

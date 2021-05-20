@@ -1,8 +1,8 @@
 import React from 'react';
 
-const FlightInformation = () => {
+const FlightInformation = ({ flights }) => {
 	return (
-		<div>
+		<div id='flight-information'>
 			<h2>Flight Information</h2>
 		</div>
 	);
