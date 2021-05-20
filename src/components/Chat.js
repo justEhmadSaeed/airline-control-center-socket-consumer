@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 const Chat = ({ chats, sendChat }) => {
 	const [senderName, setSenderName] = useState('Sender 1');
-    const [message, setMessage] = useState('');
-    
+	const [message, setMessage] = useState('');
+
 	// send message to the server
-	const sendMessage = async () => {
+	const sendMessage =  () => {
 		sendChat(senderName, message);
 		setMessage('');
-    };
-    // Convert unix timestamp to Human-readable date
+	};
+	// Convert unix timestamp to Human-readable date
 	const convertToDateTime = (unix) => {
 		return new Date(unix).toLocaleString();
 	};

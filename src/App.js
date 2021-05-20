@@ -4,16 +4,17 @@ import { useEffect, useState } from 'react';
 import FlightMap from './components/FlightMap';
 import FlightInformation from './components/FlightInformation';
 import Chat from './components/Chat';
-const socket = io(
-	'http://tarea-3-websocket.2021-1.tallerdeintegracion.cl',
-	{
-		path: '/flights',
-	}
-);
+// const socket = io(
+// 	'http://tarea-3-websocket.2021-1.tallerdeintegracion.cl',
+// 	{
+// 		path: '/flights',
+// 	}
+// );
 const App = () => {
 	const [markerPositions, setMarkerPositions] = useState({});
 	const [flights, setFlights] = useState([]);
 	const [chats, setChats] = useState([]);
+	const [sockets, setSockets] = useState(null);
 	// marker position useEffect
 	useEffect(() => {
 		const socket = io(
@@ -28,7 +29,10 @@ const App = () => {
 			temp[data.code] = data.position;
 			// update the state
 			setMarkerPositions(temp);
-			console.log(markerPositions);
+			// console.log(markerPositions);
+		});
+		socket.on('FLIGHTS', (data) => {
+			setFlights(data);
 		});
 		// Listen to the POSITION
 
@@ -38,27 +42,20 @@ const App = () => {
 			tempChat.push(data);
 			setChats(tempChat);
 		});
-
+		setSockets(socket);
 		// 	// CLEAN UP THE EFFECT
-		return () => socket.disconnect();
+		return () => {
+			socket.disconnect();
+		};
 	}, [markerPositions, chats]);
 
 	// flights info useEffect
 	useEffect(() => {
-		const socket = io(
-			'http://tarea-3-websocket.2021-1.tallerdeintegracion.cl',
-			{
-				path: '/flights',
-			}
-		);
-		socket.emit('FLIGHTS', () => {});
-		socket.on('FLIGHTS', (data) => {
-			console.log(data);
-			setFlights(data);
-		});
-	}, []);
+		if (sockets) sockets.emit('FLIGHTS', () => {});
+	}, [sockets]);
+
 	const sendChat = (name, message) => {
-		socket.emit('CHAT', {
+		sockets.emit('CHAT', {
 			name,
 			message,
 		});
