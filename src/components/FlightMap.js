@@ -7,6 +7,7 @@ import {
 	Polyline,
 	Tooltip,
 	FeatureGroup,
+	Circle,
 } from 'react-leaflet';
 
 const FlightMap = ({ markerPositions, flights }) => {
@@ -59,6 +60,30 @@ const FlightMap = ({ markerPositions, flights }) => {
 								opacity: 0.8,
 							}}
 							positions={[flight.destination, flight.origin]}
+						/>
+						<Circle
+							center={flight.destination}
+							// radius={400}
+							pathOptions={{
+								color:
+									'#' +
+									Math.floor(16777215 * ((key + 1) / 11)).toString(
+										16
+									),
+								weight: 10,
+							}}
+						/>
+						<Circle
+							center={flight.origin}
+							// radius={400}
+							pathOptions={{
+								color:
+									'#' +
+									Math.floor(16777215 * ((key + 1) / 11)).toString(
+										16
+									),
+								weight: 10,
+							}}
 						/>
 					</FeatureGroup>
 				))}
