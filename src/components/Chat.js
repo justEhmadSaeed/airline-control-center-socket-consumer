@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const Chat = ({ chats, sendChat }) => {
-	const [senderName, setSenderName] = useState('Sender 1');
+	const [senderName, setSenderName] = useState('Username 1');
 	const [message, setMessage] = useState('');
 
 	// send message to the server

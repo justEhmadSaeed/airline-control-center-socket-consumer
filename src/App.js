@@ -21,6 +21,7 @@ const App = () => {
 			'http://tarea-3-websocket.2021-1.tallerdeintegracion.cl',
 			{
 				path: '/flights',
+				transports: ['websocket'],
 			}
 		);
 		// Listen to the POSITION
@@ -55,6 +56,7 @@ const App = () => {
 	}, [sockets]);
 
 	const sendChat = (name, message) => {
+		console.dir({ name, message });
 		sockets.emit('CHAT', {
 			name,
 			message,
